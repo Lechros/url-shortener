@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    username: mysql_user
+    password: mysql_password
+    url: jdbc:mysql://localhost:3306/url_shortener
+    driver-class-name: com.mysql.cj.jdbc.Driver
