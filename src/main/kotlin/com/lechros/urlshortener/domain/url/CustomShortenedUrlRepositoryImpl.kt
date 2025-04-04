@@ -7,7 +7,6 @@ class CustomShortenedUrlRepositoryImpl(
     private val kotlinJdslJpqlExecutor: KotlinJdslJpqlExecutor
 ) : CustomShortenedUrlRepository {
     override fun findValidUrl(shortPath: String, currentTime: LocalDateTime): ShortenedUrl? {
-        println("Hello")
         return kotlinJdslJpqlExecutor.findAll {
             select(entity(ShortenedUrl::class))
                 .from(entity(ShortenedUrl::class))
