@@ -12,7 +12,7 @@ class UrlService(
     fun getTargetUrl(shortPath: String): String {
         val now = LocalDateTime.now()
         val shortenedUrl =
-            shortenedUrlRepository.findValidUrl(shortPath, now)
+            shortenedUrlRepository.findEnabledUrl(shortPath, now)
                 ?: throw EntityNotFoundException()
 
         return shortenedUrl.targetUrl
