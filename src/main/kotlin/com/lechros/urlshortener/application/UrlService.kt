@@ -3,22 +3,31 @@ package com.lechros.urlshortener.application
 import com.lechros.urlshortener.domain.url.ShortenedUrl
 import com.lechros.urlshortener.domain.url.ShortenedUrlRepository
 import com.lechros.urlshortener.infra.redis.MethodFairLock
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.apache.commons.validator.routines.UrlValidator
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
 
 @Service
 class UrlService(
     private val shortenedUrlRepository: ShortenedUrlRepository,
 ) {
-    lateinit var self: UrlService
+    @Autowired
+    @Lazy
+    private lateinit var self: UrlService
 
+    /**
+     * `alias`에 해당하는 단축 URL을 조회합니다.
+     *
+     * @throws UrlNotFoundException 단축 URL이 존재하지 않는 경우
+     */
     fun getUrl(alias: String): String {
-        val now = LocalDateTime.now()
-        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw EntityNotFoundException()
+        val now = LocalDateTime.now(ZoneOffset.UTC)
+        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw UrlNotFoundException()
 
         return shortenedUrl.url
     }
@@ -27,7 +36,7 @@ class UrlService(
      * `alias`가 지정되었으면 해당 경로로, 아닐 경우 임의의 경로로 단축 URL을 생성합니다.
      *
      * @throws InvalidUrlException 잘못된 타겟 URL인 경우
-     * @throws AliasAlreadyExistsException 이미 존재하는 단축 URL인 경우
+     * @throws InvalidAliasException 이미 존재하는 단축 URL인 경우
      * @throws InvalidUrlExpireDateException 만료일이 현재 시간보다 이전인 경우
      * @throws ShortUrlCreateException 단축 URL을 생성하지 못한 경우
      */
@@ -35,7 +44,7 @@ class UrlService(
         val url = normalizeUrl(request.url)
         validateUrl(url)
 
-        val now = LocalDateTime.now()
+        val now = LocalDateTime.now(ZoneOffset.UTC)
         validateExpireDate(request.expiresAt, now)
 
         if (!request.alias.isNullOrEmpty()) {
@@ -48,7 +57,11 @@ class UrlService(
     private fun doShortenUrlToFixedAlias(
         url: String, alias: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrlResponse {
-        val result = self.tryInsert(url, alias, createdAt, expiresAt) ?: throw AliasAlreadyExistsException()
+        if (!alias.matches(Regex("^[a-zA-Z0-9]+$"))) {
+            throw InvalidAliasException("잘못된 alias 형식입니다.")
+        }
+        val result =
+            self.tryInsert(url, alias, createdAt, expiresAt) ?: throw InvalidAliasException("이미 존재하는 alias입니다.")
         return ShortenedUrlResponse(result)
     }
 

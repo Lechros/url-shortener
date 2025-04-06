@@ -1,6 +1,6 @@
 package com.lechros.urlshortener.application
 
-class AliasAlreadyExistsException : RuntimeException("이미 존재하는 alias입니다.")
+class InvalidAliasException(message: String) : RuntimeException(message)
 
 class InvalidUrlException(message: String? = "잘못된 URL 형식입니다.") : RuntimeException(message)
 

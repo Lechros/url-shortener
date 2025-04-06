@@ -44,8 +44,8 @@ class UrlRestControllerTest(
         contentType = APPLICATION_JSON
     }
 
-    fun ContentResultMatchersDsl.jsonResult(value: Any) {
-        json(objectMapper.writeValueAsString(value), JsonCompareMode.STRICT)
+    fun ContentResultMatchersDsl.success(value: Any) {
+        json(objectMapper.writeValueAsString(ApiResponse.success(value)), JsonCompareMode.STRICT)
     }
 
     "지정한 alias로 단축 URL을 생성한다" {
@@ -58,7 +58,7 @@ class UrlRestControllerTest(
             jsonContent(request)
         }.andExpect {
             status { isOk() }
-            content { jsonResult(response) }
+            content { success(response) }
         }
     }
 

@@ -4,6 +4,7 @@ import com.lechros.urlshortener.application.ShortenedUrlCreateRequest
 import com.lechros.urlshortener.application.ShortenedUrlResponse
 import com.lechros.urlshortener.domain.url.ShortenedUrl
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 private const val ALIAS = "test1"
 private const val URL = "https://example.com/"
@@ -11,7 +12,7 @@ private const val URL = "https://example.com/"
 fun createShortenedUrl(
     alias: String = ALIAS,
     url: String = URL,
-    createdAt: LocalDateTime = LocalDateTime.now(),
+    createdAt: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC),
     expiresAt: LocalDateTime? = null,
     disabled: Boolean = false,
     deleted: Boolean = false,
@@ -44,7 +45,7 @@ fun createShortenedUrlCreateRequest(
 fun createShortenedUrlResponse(
     alias: String = ALIAS,
     url: String = URL,
-    createdAt: LocalDateTime = LocalDateTime.now(),
+    createdAt: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC),
     expiresAt: LocalDateTime? = null,
     disabled: Boolean = false,
 ): ShortenedUrlResponse {

@@ -16,7 +16,7 @@ class UrlRestController(
     private val urlService: UrlService,
 ) {
     @PostMapping("/create")
-    fun shortenUrl(@RequestBody @Valid request: ShortenedUrlCreateRequest): ResponseEntity<ShortenedUrlResponse> {
-        return ResponseEntity.ok(urlService.shortenUrl(request))
+    fun shortenUrl(@RequestBody @Valid request: ShortenedUrlCreateRequest): ResponseEntity<ApiResponse<ShortenedUrlResponse>> {
+        return ResponseEntity.ok(ApiResponse.success(urlService.shortenUrl(request)))
     }
 }

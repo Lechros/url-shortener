@@ -1,8 +1,8 @@
 package com.lechros.urlshortener.ui.api
 
+import com.lechros.urlshortener.application.InvalidAliasException
 import com.lechros.urlshortener.application.InvalidUrlException
 import com.lechros.urlshortener.application.InvalidUrlExpireDateException
-import com.lechros.urlshortener.application.AliasAlreadyExistsException
 import com.lechros.urlshortener.application.ShortUrlCreateException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -21,40 +21,40 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         headers: HttpHeaders,
         status: HttpStatusCode,
         request: WebRequest
-    ): ResponseEntity<Any>? {
+    ): ResponseEntity<Any> {
         logger.error("message", ex)
-        logger.error(ex.bindingResult.fieldErrors.size)
+        val message = ex.bindingResult.fieldErrors.joinToString(", ") {
+            "${it.field}: ${it.defaultMessage.orEmpty()}"
+        }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ex.bindingResult.fieldErrors.joinToString(", ") {
-                "${it.field}: ${it.defaultMessage.orEmpty()}"
-            })
+            .body(ApiResponse.error(message))
     }
 
-    @ExceptionHandler(AliasAlreadyExistsException::class)
-    fun handleAliasAlreadyExistsException(ex: AliasAlreadyExistsException): ResponseEntity<String> {
+    @ExceptionHandler(InvalidAliasException::class)
+    fun handleAliasAlreadyExistsException(ex: InvalidAliasException): ResponseEntity<ApiResponse<Nothing>> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(ex.message)
+            .body(ApiResponse.error(ex.message))
     }
 
     @ExceptionHandler(InvalidUrlException::class)
-    fun handleInvalidUrlException(ex: InvalidUrlException): ResponseEntity<String> {
+    fun handleInvalidUrlException(ex: InvalidUrlException): ResponseEntity<ApiResponse<Nothing>> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-            .body(ex.message)
+            .body(ApiResponse.error(ex.message))
     }
 
     @ExceptionHandler(InvalidUrlExpireDateException::class)
-    fun handleInvalidUrlExpireDateException(ex: InvalidUrlExpireDateException): ResponseEntity<String> {
+    fun handleInvalidUrlExpireDateException(ex: InvalidUrlExpireDateException): ResponseEntity<ApiResponse<Nothing>> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-            .body(ex.message)
+            .body(ApiResponse.error(ex.message))
     }
 
     @ExceptionHandler(ShortUrlCreateException::class)
-    fun handleShortUrlCreateException(ex: ShortUrlCreateException): ResponseEntity<String> {
+    fun handleShortUrlCreateException(ex: ShortUrlCreateException): ResponseEntity<ApiResponse<Nothing>> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ex.message)
+            .body(ApiResponse.error(ex.message))
     }
 }

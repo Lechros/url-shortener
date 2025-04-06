@@ -10,12 +10,16 @@ import io.mockk.every
 import io.mockk.mockk
 import jakarta.persistence.EntityNotFoundException
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class UrlServiceTest : BehaviorSpec({
     val shortenedUrlRepository = mockk<ShortenedUrlRepository>()
 
     val urlService = UrlService(shortenedUrlRepository)
-    urlService.self = urlService
+    // Set self by reflection to bypass private
+    val field = UrlService::class.java.getDeclaredField("self")
+    field.isAccessible = true
+    field.set(urlService, urlService)
 
     Given("활성화된 단축 URL이 존재하는 경우") {
         every { shortenedUrlRepository.findEnabledUrl(any(), any()) } returns createShortenedUrl()
@@ -23,7 +27,7 @@ class UrlServiceTest : BehaviorSpec({
 
         When("동일한 경로로 단축 URL을 생성하면") {
             Then("예외가 발생한다") {
-                shouldThrow<AliasAlreadyExistsException> {
+                shouldThrow<InvalidAliasException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest())
                 }
             }
@@ -45,7 +49,7 @@ class UrlServiceTest : BehaviorSpec({
 
         When("동일한 경로로 단축 URL을 생성하면") {
             Then("예외가 발생한다") {
-                shouldThrow<AliasAlreadyExistsException> {
+                shouldThrow<InvalidAliasException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest())
                 }
             }
@@ -53,7 +57,7 @@ class UrlServiceTest : BehaviorSpec({
 
         When("해당 경로로 조회하면") {
             Then("예외가 발생한다") {
-                shouldThrow<EntityNotFoundException> {
+                shouldThrow<UrlNotFoundException> {
                     urlService.getUrl("test1")
                 }
             }
@@ -107,7 +111,7 @@ class UrlServiceTest : BehaviorSpec({
         }
 
         When("만료 시점을 과거로 설정하여 단축하면") {
-            val expireDate = LocalDateTime.now().minusDays(1)
+            val expireDate = LocalDateTime.now(ZoneOffset.UTC).minusDays(1)
 
             Then("예외가 발생한다") {
                 shouldThrow<InvalidUrlExpireDateException> {

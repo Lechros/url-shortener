@@ -8,6 +8,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.springframework.context.annotation.Import
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @RepositoryTest
 @Import(KotlinJdslAutoConfiguration::class)
@@ -15,7 +16,7 @@ class ShortenedUrlRepositoryTest(
     private val shortenedUrlRepository: ShortenedUrlRepository,
 ) : ExpectSpec({
     context("활성화된 단축 URL 조회") {
-        val now = LocalDateTime.now()
+        val now = LocalDateTime.now(ZoneOffset.UTC)
 
         shortenedUrlRepository.saveAll(
              listOf(
@@ -55,7 +56,7 @@ class ShortenedUrlRepositoryTest(
     }
 
     context("유효한 단축 URL 조회") {
-        val now = LocalDateTime.now()
+        val now = LocalDateTime.now(ZoneOffset.UTC)
 
         shortenedUrlRepository.saveAll(
             listOf(

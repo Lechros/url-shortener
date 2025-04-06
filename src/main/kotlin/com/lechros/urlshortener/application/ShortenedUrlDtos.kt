@@ -14,7 +14,6 @@ data class ShortenedUrlCreateRequest(
     @field:Size(max = 20)
     val alias: String? = null,
 
-    @field:Future
     val expiresAt: LocalDateTime? = null,
 )
 
