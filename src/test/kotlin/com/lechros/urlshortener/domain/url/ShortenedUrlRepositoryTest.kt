@@ -19,17 +19,17 @@ class ShortenedUrlRepositoryTest(
 
         shortenedUrlRepository.saveAll(
              listOf(
-                createShortenedUrl(shortPath = "normal", targetUrl = "normal"),
-                createShortenedUrl(shortPath = "expired", targetUrl = "expired", expiresAt = now.minusDays(1)),
-                createShortenedUrl(shortPath = "disabled", targetUrl = "disabled", disabled = true),
-                createShortenedUrl(shortPath = "deleted", targetUrl = "deleted", deleted = true),
+                createShortenedUrl(alias = "normal", url = "normal"),
+                createShortenedUrl(alias = "expired", url = "expired", expiresAt = now.minusDays(1)),
+                createShortenedUrl(alias = "disabled", url = "disabled", disabled = true),
+                createShortenedUrl(alias = "deleted", url = "deleted", deleted = true),
             )
         )
 
         expect("정상적인 단축 URL이 조회되어야 한다.") {
             val actual = shortenedUrlRepository.findEnabledUrl("normal", now)
             actual shouldNotBeNull {
-                targetUrl shouldBe "normal"
+                url shouldBe "normal"
             }
         }
 
@@ -59,17 +59,17 @@ class ShortenedUrlRepositoryTest(
 
         shortenedUrlRepository.saveAll(
             listOf(
-                createShortenedUrl(shortPath = "normal", targetUrl = "normal"),
-                createShortenedUrl(shortPath = "expired", targetUrl = "expired", expiresAt = now.minusDays(1)),
-                createShortenedUrl(shortPath = "disabled", targetUrl = "disabled", disabled = true),
-                createShortenedUrl(shortPath = "deleted", targetUrl = "deleted", deleted = true),
+                createShortenedUrl(alias = "normal", url = "normal"),
+                createShortenedUrl(alias = "expired", url = "expired", expiresAt = now.minusDays(1)),
+                createShortenedUrl(alias = "disabled", url = "disabled", disabled = true),
+                createShortenedUrl(alias = "deleted", url = "deleted", deleted = true),
             )
         )
 
         expect("정상적인 단축 URL이 조회되어야 한다.") {
             val actual = shortenedUrlRepository.findValidUrl("normal", now)
             actual shouldNotBeNull {
-                targetUrl shouldBe "normal"
+                url shouldBe "normal"
             }
         }
 
@@ -81,7 +81,7 @@ class ShortenedUrlRepositoryTest(
         expect("Disabled된 단축 URL이 조회되어야 한다.") {
             val actual = shortenedUrlRepository.findValidUrl("disabled", now)
             actual shouldNotBeNull {
-                targetUrl shouldBe "disabled"
+                url shouldBe "disabled"
             }
         }
 

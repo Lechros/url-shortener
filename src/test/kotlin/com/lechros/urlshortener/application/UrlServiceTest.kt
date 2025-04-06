@@ -23,17 +23,17 @@ class UrlServiceTest : BehaviorSpec({
 
         When("동일한 경로로 단축 URL을 생성하면") {
             Then("예외가 발생한다") {
-                shouldThrow<ShortPathAlreadyExistsException> {
+                shouldThrow<AliasAlreadyExistsException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest())
                 }
             }
         }
 
         When("해당 경로로 조회하면") {
-            val targetUrl = urlService.getTargetUrl("test1")
+            val url = urlService.getUrl("test1")
 
             Then("원본 URL이 반환된다") {
-                targetUrl shouldBe "https://example.com/"
+                url shouldBe "https://example.com/"
             }
         }
     }
@@ -45,7 +45,7 @@ class UrlServiceTest : BehaviorSpec({
 
         When("동일한 경로로 단축 URL을 생성하면") {
             Then("예외가 발생한다") {
-                shouldThrow<ShortPathAlreadyExistsException> {
+                shouldThrow<AliasAlreadyExistsException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest())
                 }
             }
@@ -54,7 +54,7 @@ class UrlServiceTest : BehaviorSpec({
         When("해당 경로로 조회하면") {
             Then("예외가 발생한다") {
                 shouldThrow<EntityNotFoundException> {
-                    urlService.getTargetUrl("test1")
+                    urlService.getUrl("test1")
                 }
             }
         }
@@ -68,7 +68,7 @@ class UrlServiceTest : BehaviorSpec({
             val shortenedUrl = urlService.shortenUrl(createShortenedUrlCreateRequest())
 
             Then("생성에 성공한다") {
-                shortenedUrl.targetUrl shouldBe "https://example.com/"
+                shortenedUrl.url shouldBe "https://example.com/"
             }
         }
     }
@@ -81,7 +81,7 @@ class UrlServiceTest : BehaviorSpec({
             val shortenedUrl = urlService.shortenUrl(createShortenedUrlCreateRequest())
 
             Then("생성에 성공한다") {
-                shortenedUrl.targetUrl shouldBe "https://example.com/"
+                shortenedUrl.url shouldBe "https://example.com/"
             }
         }
     }
@@ -94,14 +94,14 @@ class UrlServiceTest : BehaviorSpec({
             val shortenedUrl = urlService.shortenUrl(createShortenedUrlCreateRequest())
 
             Then("생성에 성공한다") {
-                shortenedUrl.targetUrl shouldBe "https://example.com/"
+                shortenedUrl.url shouldBe "https://example.com/"
             }
         }
 
         When("잘못된 URL을 단축하면") {
             Then("예외가 발생한다") {
-                shouldThrow<InvalidTargetUrlException> {
-                    urlService.shortenUrl(createShortenedUrlCreateRequest(targetUrl = "invalid-url"))
+                shouldThrow<InvalidUrlException> {
+                    urlService.shortenUrl(createShortenedUrlCreateRequest(url = "invalid-url"))
                 }
             }
         }

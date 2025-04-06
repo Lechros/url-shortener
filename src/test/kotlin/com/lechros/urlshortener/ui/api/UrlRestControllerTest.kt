@@ -48,7 +48,7 @@ class UrlRestControllerTest(
         json(objectMapper.writeValueAsString(value), JsonCompareMode.STRICT)
     }
 
-    "지정한 shortPath로 단축 URL을 생성한다" {
+    "지정한 alias로 단축 URL을 생성한다" {
         val request = createShortenedUrlCreateRequest()
         val response = createShortenedUrlResponse()
         every { urlService.shortenUrl(any()) } returns response
@@ -62,8 +62,8 @@ class UrlRestControllerTest(
         }
     }
 
-    "targetUrl이 공백인 요청은 실패한다" {
-        val request = createShortenedUrlCreateRequest(targetUrl = "")
+    "URL이 공백인 요청은 실패한다" {
+        val request = createShortenedUrlCreateRequest(url = "")
         val response = createShortenedUrlResponse()
         every { urlService.shortenUrl(any()) } returns response
 

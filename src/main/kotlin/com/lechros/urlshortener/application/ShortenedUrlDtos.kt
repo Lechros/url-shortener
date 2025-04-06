@@ -9,26 +9,26 @@ import java.time.LocalDateTime
 data class ShortenedUrlCreateRequest(
     @field:NotBlank
     @field:Size(min = 1, max = 2000)
-    val targetUrl: String,
+    val url: String,
 
     @field:Size(max = 20)
-    val shortPath: String? = null,
+    val alias: String? = null,
 
     @field:Future
     val expiresAt: LocalDateTime? = null,
 )
 
 data class ShortenedUrlResponse(
-    val targetUrl: String,
-    val shortPath: String,
+    val url: String,
+    val alias: String,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime? = null,
     val disabled: Boolean = false,
     val deleted: Boolean = false,
 ) {
     constructor(shortenedUrl: ShortenedUrl) : this(
-        targetUrl = shortenedUrl.targetUrl,
-        shortPath = shortenedUrl.shortPath,
+        url = shortenedUrl.url,
+        alias = shortenedUrl.alias,
         createdAt = shortenedUrl.createdAt,
         expiresAt = shortenedUrl.expiresAt,
         disabled = shortenedUrl.disabled,

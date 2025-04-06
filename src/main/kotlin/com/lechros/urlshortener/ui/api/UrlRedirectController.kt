@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping
 class UrlRedirectController(
     private val urlService: UrlService
 ) {
-    @GetMapping("/{shortPath}")
-    fun redirect(@PathVariable shortPath: String): ResponseEntity<Any> {
+    @GetMapping("/{alias}")
+    fun redirect(@PathVariable alias: String): ResponseEntity<Any> {
         try {
-            val targetUrl = urlService.getTargetUrl(shortPath)
+            val url = urlService.getUrl(alias)
             return ResponseEntity.status(HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, targetUrl)
+                .header(HttpHeaders.LOCATION, url)
                 .build()
         } catch (e: EntityNotFoundException) {
             // TODO: Add Custom 404 Page

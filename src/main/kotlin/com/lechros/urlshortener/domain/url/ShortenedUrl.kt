@@ -8,10 +8,10 @@ import java.time.LocalDateTime
 @Entity
 class ShortenedUrl(
     @Column(nullable = false, length = 2000)
-    val targetUrl: String,
+    val url: String,
 
     @Column(nullable = false, length = 20)
-    val shortPath: String,
+    val alias: String,
 
     @Column(nullable = false)
     val createdAt: LocalDateTime,

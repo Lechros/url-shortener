@@ -16,49 +16,48 @@ class UrlService(
 ) {
     lateinit var self: UrlService
 
-    fun getTargetUrl(shortPath: String): String {
+    fun getUrl(alias: String): String {
         val now = LocalDateTime.now()
-        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(shortPath, now) ?: throw EntityNotFoundException()
+        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw EntityNotFoundException()
 
-        return shortenedUrl.targetUrl
+        return shortenedUrl.url
     }
 
     /**
-     * `shortPath`가 지정되었으면 해당 경로로, 아닐 경우 임의의 경로로 단축 URL을 생성합니다.
+     * `alias`가 지정되었으면 해당 경로로, 아닐 경우 임의의 경로로 단축 URL을 생성합니다.
      *
-     * @throws InvalidTargetUrlException 잘못된 타겟 URL인 경우
-     * @throws ShortPathAlreadyExistsException 이미 존재하는 단축 URL인 경우
+     * @throws InvalidUrlException 잘못된 타겟 URL인 경우
+     * @throws AliasAlreadyExistsException 이미 존재하는 단축 URL인 경우
      * @throws InvalidUrlExpireDateException 만료일이 현재 시간보다 이전인 경우
      * @throws ShortUrlCreateException 단축 URL을 생성하지 못한 경우
      */
     fun shortenUrl(request: ShortenedUrlCreateRequest): ShortenedUrlResponse {
-        val targetUrl = normalizeUrl(request.targetUrl)
-        validateUrl(targetUrl)
+        val url = normalizeUrl(request.url)
+        validateUrl(url)
 
         val now = LocalDateTime.now()
         validateExpireDate(request.expiresAt, now)
 
-        if (!request.shortPath.isNullOrEmpty()) {
-            return doShortenUrlToFixedShortPath(targetUrl, request.shortPath, now, request.expiresAt)
+        if (!request.alias.isNullOrEmpty()) {
+            return doShortenUrlToFixedAlias(url, request.alias, now, request.expiresAt)
         } else {
-            return doShortenUrlToRandomShortPath(targetUrl, now, request.expiresAt)
+            return doShortenUrlToRandomAlias(url, now, request.expiresAt)
         }
     }
 
-    private fun doShortenUrlToFixedShortPath(
-        targetUrl: String, shortPath: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
+    private fun doShortenUrlToFixedAlias(
+        url: String, alias: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrlResponse {
-        val result =
-            self.tryInsert(targetUrl, shortPath, createdAt, expiresAt) ?: throw ShortPathAlreadyExistsException()
+        val result = self.tryInsert(url, alias, createdAt, expiresAt) ?: throw AliasAlreadyExistsException()
         return ShortenedUrlResponse(result)
     }
 
-    private fun doShortenUrlToRandomShortPath(
-        targetUrl: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
+    private fun doShortenUrlToRandomAlias(
+        url: String, alias: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrlResponse {
         repeat(10) {
-            val generatedShortPath = generateRandomBase62String(8)
-            val result = self.tryInsert(targetUrl, generatedShortPath, createdAt, expiresAt)
+            val generatedAlias = generateRandomBase62String(8)
+            val result = self.tryInsert(url, generatedAlias, alias, expiresAt)
             if (result != null) {
                 return ShortenedUrlResponse(result)
             }
@@ -67,18 +66,18 @@ class UrlService(
         throw ShortUrlCreateException("단축 URL 생성에 실패했습니다. 잠시 후 다시 시도해주세요.")
     }
 
-    @MethodFairLock("url:create:#{#shortPath}", 1000, 500, TimeUnit.MILLISECONDS)
+    @MethodFairLock("url:create:#{#alias}", 1000, 500, TimeUnit.MILLISECONDS)
     @Transactional
     fun tryInsert(
-        targetUrl: String, shortPath: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
+        url: String, alias: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrl? {
-        shortenedUrlRepository.findValidUrl(shortPath, createdAt)?.let {
+        shortenedUrlRepository.findValidUrl(alias, createdAt)?.let {
             return null
         }
 
         val shortenedUrl = shortenedUrlRepository.save(
             ShortenedUrl(
-                targetUrl = targetUrl, shortPath = shortPath, createdAt = createdAt, expiresAt = expiresAt
+                url = url, alias = alias, createdAt = createdAt, expiresAt = expiresAt
             )
         )
         return shortenedUrl
@@ -103,7 +102,7 @@ class UrlService(
 
     private fun validateUrl(url: String) {
         if (!UrlValidator.getInstance().isValid(url)) {
-            throw InvalidTargetUrlException()
+            throw InvalidUrlException()
         }
     }
 

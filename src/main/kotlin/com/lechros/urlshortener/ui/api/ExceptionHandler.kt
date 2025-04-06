@@ -1,8 +1,8 @@
 package com.lechros.urlshortener.ui.api
 
-import com.lechros.urlshortener.application.InvalidTargetUrlException
+import com.lechros.urlshortener.application.InvalidUrlException
 import com.lechros.urlshortener.application.InvalidUrlExpireDateException
-import com.lechros.urlshortener.application.ShortPathAlreadyExistsException
+import com.lechros.urlshortener.application.AliasAlreadyExistsException
 import com.lechros.urlshortener.application.ShortUrlCreateException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -30,15 +30,15 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             })
     }
 
-    @ExceptionHandler(ShortPathAlreadyExistsException::class)
-    fun handleShortPathAlreadyExistsException(ex: ShortPathAlreadyExistsException): ResponseEntity<String> {
+    @ExceptionHandler(AliasAlreadyExistsException::class)
+    fun handleAliasAlreadyExistsException(ex: AliasAlreadyExistsException): ResponseEntity<String> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(ex.message)
     }
 
-    @ExceptionHandler(InvalidTargetUrlException::class)
-    fun handleInvalidTargetUrlException(ex: InvalidTargetUrlException): ResponseEntity<String> {
+    @ExceptionHandler(InvalidUrlException::class)
+    fun handleInvalidUrlException(ex: InvalidUrlException): ResponseEntity<String> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(ex.message)

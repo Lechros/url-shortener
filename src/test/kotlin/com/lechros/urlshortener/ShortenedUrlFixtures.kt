@@ -5,12 +5,12 @@ import com.lechros.urlshortener.application.ShortenedUrlResponse
 import com.lechros.urlshortener.domain.url.ShortenedUrl
 import java.time.LocalDateTime
 
-private const val SHORT_PATH = "test1"
-private const val TARGET_URL = "https://example.com/"
+private const val ALIAS = "test1"
+private const val URL = "https://example.com/"
 
 fun createShortenedUrl(
-    shortPath: String = SHORT_PATH,
-    targetUrl: String = TARGET_URL,
+    alias: String = ALIAS,
+    url: String = URL,
     createdAt: LocalDateTime = LocalDateTime.now(),
     expiresAt: LocalDateTime? = null,
     disabled: Boolean = false,
@@ -19,8 +19,8 @@ fun createShortenedUrl(
 ): ShortenedUrl {
     return ShortenedUrl(
         id = id,
-        shortPath = shortPath,
-        targetUrl = targetUrl,
+        alias = alias,
+        url = url,
         createdAt = createdAt,
         expiresAt = expiresAt
     ).apply {
@@ -30,27 +30,27 @@ fun createShortenedUrl(
 }
 
 fun createShortenedUrlCreateRequest(
-    shortPath: String = SHORT_PATH,
-    targetUrl: String = TARGET_URL,
+    alias: String = ALIAS,
+    url: String = URL,
     expiresAt: LocalDateTime? = null,
 ): ShortenedUrlCreateRequest {
     return ShortenedUrlCreateRequest(
-        shortPath = shortPath,
-        targetUrl = targetUrl,
+        alias = alias,
+        url = url,
         expiresAt = expiresAt
     )
 }
 
 fun createShortenedUrlResponse(
-    shortPath: String = SHORT_PATH,
-    targetUrl: String = TARGET_URL,
+    alias: String = ALIAS,
+    url: String = URL,
     createdAt: LocalDateTime = LocalDateTime.now(),
     expiresAt: LocalDateTime? = null,
     disabled: Boolean = false,
 ): ShortenedUrlResponse {
     return ShortenedUrlResponse(
-        shortPath = shortPath,
-        targetUrl = targetUrl,
+        alias = alias,
+        url = url,
         createdAt = createdAt,
         expiresAt = expiresAt,
         disabled = disabled,
