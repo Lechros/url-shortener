@@ -16,7 +16,6 @@ class DatabaseInitializer(
     private val shortenedUrlRepository: ShortenedUrlRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
-
         if (shouldSkip()) return
         populate()
     }

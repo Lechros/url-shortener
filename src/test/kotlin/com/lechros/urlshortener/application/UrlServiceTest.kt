@@ -8,7 +8,6 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import jakarta.persistence.EntityNotFoundException
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 

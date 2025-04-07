@@ -19,7 +19,7 @@ class ShortenedUrlRepositoryTest(
         val now = LocalDateTime.now(ZoneOffset.UTC)
 
         shortenedUrlRepository.saveAll(
-             listOf(
+            listOf(
                 createShortenedUrl(alias = "normal", url = "normal"),
                 createShortenedUrl(alias = "expired", url = "expired", expiresAt = now.minusDays(1)),
                 createShortenedUrl(alias = "disabled", url = "disabled", disabled = true),

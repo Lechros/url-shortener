@@ -1,7 +1,6 @@
 package com.lechros.urlshortener.application
 
 import com.lechros.urlshortener.domain.url.ShortenedUrl
-import jakarta.validation.constraints.Future
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
