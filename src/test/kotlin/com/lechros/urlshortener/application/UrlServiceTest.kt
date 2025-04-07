@@ -5,7 +5,10 @@ import com.lechros.urlshortener.createShortenedUrlCreateRequest
 import com.lechros.urlshortener.domain.url.ShortenedUrlRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.data.forAll
+import io.kotest.data.row
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDateTime
@@ -100,18 +103,94 @@ class UrlServiceTest : BehaviorSpec({
                 shortenedUrl.url shouldBe "https://example.com/"
             }
         }
+    }
 
-        When("잘못된 URL을 단축하면") {
+
+
+    Given("잘못된 형식의 URL이 포함된 요청을") {
+        When("단축하면") {
             Then("예외가 발생한다") {
                 shouldThrow<InvalidUrlException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest(url = "invalid-url"))
                 }
             }
         }
+    }
 
-        When("만료 시점을 과거로 설정하여 단축하면") {
-            val expireDate = LocalDateTime.now(ZoneOffset.UTC).minusDays(1)
+    Given("alias에 base62 이외의 문자가 포함된 요청을") {
+        forAll(
+            row("abcd_efg"),
+            row("ABCD*EFG"),
+            row("abcd-efg"),
+            row("한글"),
+        ) { alias ->
+            When("단축하면") {
+                Then("예외가 발생한다") {
+                    shouldThrow<InvalidAliasException> {
+                        urlService.shortenUrl(createShortenedUrlCreateRequest(alias = alias))
+                    }
+                }
+            }
+        }
+    }
 
+    Given("alias의 길이가 0인 요청을") {
+        val alias = ""
+
+        When("단축하면") {
+            val shortenedUrl = urlService.shortenUrl(createShortenedUrlCreateRequest(alias = alias))
+
+            Then("임의의 alias로 단축된다") {
+                shortenedUrl.alias shouldMatch "^[a-zA-Z0-9]{1,20}$"
+            }
+        }
+    }
+
+    Given("alias의 길이가 [1,20]인 요청을") {
+        forAll(
+            row("a"),
+            row("1234567890"),
+            row("12345678901234567890"),
+        ) { alias ->
+            When("단축하면") {
+                val shortenedUrl = urlService.shortenUrl(createShortenedUrlCreateRequest(alias = alias))
+
+                Then("입력한 alias로 설정된다") {
+                    shortenedUrl.alias shouldBe alias
+                    shortenedUrl.url shouldBe "https://example.com/"
+                }
+            }
+        }
+    }
+
+    Given("alias의 길이가 20을 초과하는 요청을") {
+        val alias = "123456789012345678901"
+
+        When("단축하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<InvalidAliasException> {
+                    urlService.shortenUrl(createShortenedUrlCreateRequest(alias = alias))
+                }
+            }
+        }
+    }
+
+    Given("만료 시점이 미래인 요청을") {
+        val expireDate = LocalDateTime.now(ZoneOffset.UTC).plusDays(1)
+
+        When("단축하면") {
+            val shortenedUrl = urlService.shortenUrl(createShortenedUrlCreateRequest(expiresAt = expireDate))
+
+            Then("정상적으로 단축된다") {
+                shortenedUrl.url shouldBe "https://example.com/"
+            }
+        }
+    }
+
+    Given("만료 시점이 과거인 요청을") {
+        val expireDate = LocalDateTime.now(ZoneOffset.UTC).minusDays(1)
+
+        When("단축하면") {
             Then("예외가 발생한다") {
                 shouldThrow<InvalidUrlExpireDateException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest(expiresAt = expireDate))
