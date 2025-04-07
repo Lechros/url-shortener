@@ -64,11 +64,11 @@ class UrlService(
     }
 
     private fun doShortenUrlToRandomAlias(
-        url: String, alias: LocalDateTime, expiresAt: LocalDateTime?
+        url: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrlResponse {
         repeat(10) {
             val generatedAlias = generateRandomBase62String(8)
-            val result = self.tryInsert(url, generatedAlias, alias, expiresAt)
+            val result = self.tryInsert(url, generatedAlias, createdAt, expiresAt)
             if (result != null) {
                 return ShortenedUrlResponse(result)
             }
