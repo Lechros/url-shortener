@@ -1,6 +1,7 @@
 package com.lechros.urlshortener.domain.url
 
 import com.lechros.urlshortener.BaseEntity
+import com.lechros.urlshortener.support.Base62
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import java.time.LocalDateTime
@@ -44,6 +45,8 @@ class ShortenedUrl(
     }
 
     companion object {
-        val ALIAS_PATTERN = Regex("^[a-zA-Z0-9]{1,20}$")
+        fun isValidAlias(alias: String): Boolean {
+            return (1..20).contains(alias.length) && Base62.check(alias)
+        }
     }
 }

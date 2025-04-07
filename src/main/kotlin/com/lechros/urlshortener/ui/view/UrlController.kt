@@ -22,7 +22,7 @@ class UrlController(
         return "forward:/index.html"
     }
 
-    @GetMapping("/{alias:[0-9a-zA-Z]{1,20}}")
+    @GetMapping("/{alias:[0-9A-Za-z]{1,20}}")
     fun redirect(@PathVariable alias: String): ResponseEntity<Unit> {
         val url = urlService.getUrl(alias)
         return ResponseEntity.status(HttpStatus.FOUND)

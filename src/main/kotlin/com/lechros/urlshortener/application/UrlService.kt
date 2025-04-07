@@ -3,6 +3,7 @@ package com.lechros.urlshortener.application
 import com.lechros.urlshortener.domain.url.ShortenedUrl
 import com.lechros.urlshortener.domain.url.ShortenedUrlRepository
 import com.lechros.urlshortener.infra.redis.MethodFairLock
+import com.lechros.urlshortener.support.Base62
 import jakarta.transaction.Transactional
 import org.apache.commons.validator.routines.UrlValidator
 import org.springframework.beans.factory.annotation.Autowired
@@ -95,7 +96,7 @@ class UrlService(
     }
 
     private fun generateRandomBase62String(length: Int): String {
-        val characters = BASE62_CHARACTERS
+        val characters = Base62.CHARACTER_SET
         val randomStringBuilder = StringBuilder(length)
         repeat(length) {
             val randomIndex = (characters.indices).random()
@@ -119,7 +120,7 @@ class UrlService(
     }
 
     private fun validateAlias(alias: String) {
-        if (!alias.matches(ShortenedUrl.ALIAS_PATTERN)) {
+        if (!ShortenedUrl.isValidAlias(alias)) {
             throw InvalidAliasException("잘못된 alias 형식입니다.")
         }
         if (BANNED_ALIASES.contains(alias)) {
@@ -134,7 +135,6 @@ class UrlService(
     }
 
     companion object {
-        private const val BASE62_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         private val BANNED_ALIASES = listOf(
             "api", "admin", "login", "logout", "register", "signup", "home", "index", "main", "about",
             "contact", "help", "support", "terms", "privacy", "policy", "settings", "profile", "health",

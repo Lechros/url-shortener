@@ -27,7 +27,16 @@ object Base62 {
         return result
     }
 
-    private const val CHARACTER_SET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    fun check(encoded: String): Boolean {
+        if (encoded.isEmpty()) return false
+
+        for (char in encoded) {
+            if (CHAR_TO_INDEX[char] == null) return false
+        }
+        return true
+    }
+
+    const val CHARACTER_SET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
     private val BASE = CHARACTER_SET.length.toUInt()
     private val CHAR_TO_INDEX = CHARACTER_SET.withIndex().associate { it.value to it.index }
 }
