@@ -15,4 +15,14 @@ class Base62Test : StringSpec({
             Base62.encode(input) shouldBe expected
         }
     }
+
+    "Base62 디코딩" {
+        forAll(
+            row("1", 1uL),
+            row("AaC4nso8CTD", 8882965775497821603uL),
+            row("1EgQztjEJrs", 1038083939800381464uL),
+        ) { input, expected ->
+            Base62.decode(input) shouldBe expected
+        }
+    }
 })
