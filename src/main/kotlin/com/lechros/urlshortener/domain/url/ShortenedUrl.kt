@@ -42,4 +42,8 @@ class ShortenedUrl(
     fun delete() {
         deleted = true
     }
+
+    companion object {
+        val ALIAS_PATTERN = Regex("^[a-zA-Z0-9]{1,20}$")
+    }
 }

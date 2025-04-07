@@ -57,7 +57,7 @@ class UrlService(
     private fun doShortenUrlToFixedAlias(
         url: String, alias: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrlResponse {
-        if (!alias.matches(Regex("^[a-zA-Z0-9]+$"))) {
+        if (!alias.matches(ShortenedUrl.ALIAS_PATTERN)) {
             throw InvalidAliasException("잘못된 alias 형식입니다.")
         }
         val result =
@@ -97,7 +97,7 @@ class UrlService(
     }
 
     private fun generateRandomBase62String(length: Int): String {
-        val characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        val characters = BASE62_CHARACTERS
         val randomStringBuilder = StringBuilder(length)
         repeat(length) {
             val randomIndex = (characters.indices).random()
@@ -123,5 +123,9 @@ class UrlService(
         if (expiresAt != null && expiresAt.isBefore(now)) {
             throw InvalidUrlExpireDateException()
         }
+    }
+
+    companion object {
+        private const val BASE62_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     }
 }
