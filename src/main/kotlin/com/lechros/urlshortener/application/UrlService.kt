@@ -57,9 +57,7 @@ class UrlService(
     private fun doShortenUrlToFixedAlias(
         url: String, alias: String, createdAt: LocalDateTime, expiresAt: LocalDateTime?
     ): ShortenedUrlResponse {
-        if (!alias.matches(ShortenedUrl.ALIAS_PATTERN)) {
-            throw InvalidAliasException("잘못된 alias 형식입니다.")
-        }
+        validateAlias(alias)
         val result =
             self.tryInsert(url, alias, createdAt, expiresAt) ?: throw InvalidAliasException("이미 존재하는 alias입니다.")
         return ShortenedUrlResponse(result)
@@ -117,6 +115,16 @@ class UrlService(
         if (!UrlValidator.getInstance().isValid(url)) {
             throw InvalidUrlException()
         }
+        // TODO: 서버 실행 중 URL 블랙리스트를 업데이트할 수 있도록
+    }
+
+    private fun validateAlias(alias: String) {
+        if (!alias.matches(ShortenedUrl.ALIAS_PATTERN)) {
+            throw InvalidAliasException("잘못된 alias 형식입니다.")
+        }
+        if (BANNED_ALIASES.contains(alias)) {
+            throw InvalidAliasException("사용할 수 없는 alias입니다.")
+        }
     }
 
     private fun validateExpireDate(expiresAt: LocalDateTime?, now: LocalDateTime) {
@@ -127,5 +135,9 @@ class UrlService(
 
     companion object {
         private const val BASE62_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        private val BANNED_ALIASES = listOf(
+            "api", "admin", "login", "logout", "register", "signup", "home", "index", "main", "about",
+            "contact", "help", "support", "terms", "privacy", "policy", "settings", "profile", "health",
+        )
     }
 }
