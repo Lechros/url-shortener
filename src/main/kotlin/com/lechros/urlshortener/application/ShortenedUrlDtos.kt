@@ -1,7 +1,7 @@
 package com.lechros.urlshortener.application
 
 import com.lechros.urlshortener.domain.url.ShortenedUrl
-import com.lechros.urlshortener.support.hash.JsonHashId
+import com.lechros.urlshortener.support.hashid.jackson.JsonHashId
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import java.time.LocalDateTime

@@ -1,4 +1,4 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support.hashid.encoder
 
 class FeistelCipher(
     private val salt: ULong,

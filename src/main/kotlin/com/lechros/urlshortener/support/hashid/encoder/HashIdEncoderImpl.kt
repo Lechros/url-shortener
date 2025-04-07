@@ -1,5 +1,6 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support.hashid.encoder
 
+import com.lechros.urlshortener.support.Base62
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 

@@ -1,4 +1,4 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support
 
 object Base62 {
     fun encode(number: ULong): String {

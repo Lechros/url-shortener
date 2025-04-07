@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lechros.urlshortener.application.UrlService
 import com.lechros.urlshortener.createShortenedUrlCreateRequest
 import com.lechros.urlshortener.createShortenedUrlResponse
-import com.lechros.urlshortener.support.hash.HashIdEncoderImpl
+import com.lechros.urlshortener.support.hashid.encoder.HashIdEncoderImpl
 import io.kotest.core.spec.style.StringSpec
 import io.mockk.every
 import io.mockk.mockk

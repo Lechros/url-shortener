@@ -1,8 +1,9 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support.hashid.jackson
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
+import com.lechros.urlshortener.support.hashid.encoder.HashIdEncoder
 import org.springframework.stereotype.Component
 
 @Component

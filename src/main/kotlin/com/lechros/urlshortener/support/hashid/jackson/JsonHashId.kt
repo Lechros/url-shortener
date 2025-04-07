@@ -1,4 +1,4 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support.hashid.jackson
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize

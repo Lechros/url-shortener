@@ -1,9 +1,9 @@
 package com.lechros.urlshortener
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.lechros.urlshortener.support.hash.HashIdDecoder
-import com.lechros.urlshortener.support.hash.HashIdEncoder
-import com.lechros.urlshortener.support.hash.JsonHashId
+import com.lechros.urlshortener.support.hashid.encoder.HashIdDecoder
+import com.lechros.urlshortener.support.hashid.encoder.HashIdEncoder
+import com.lechros.urlshortener.support.hashid.jackson.JsonHashId
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.TestConfiguration
