@@ -1,6 +1,5 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support
 
-import com.lechros.urlshortener.support.Base62
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row

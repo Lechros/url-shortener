@@ -1,4 +1,4 @@
-package com.lechros.urlshortener.support.hash
+package com.lechros.urlshortener.support.hashid
 
 import com.lechros.urlshortener.support.hashid.encoder.FeistelCipher
 import io.kotest.core.spec.style.StringSpec
