@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lechros.urlshortener.application.UrlService
 import com.lechros.urlshortener.createShortenedUrlCreateRequest
 import com.lechros.urlshortener.createShortenedUrlResponse
+import com.lechros.urlshortener.support.hash.HashIdEncoderImpl
 import io.kotest.core.spec.style.StringSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -24,7 +25,7 @@ import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.filter.CharacterEncodingFilter
 
 @WebMvcTest(UrlRestController::class)
-@Import(UrlRestControllerTestConfig::class)
+@Import(UrlRestControllerTestConfig::class, HashIdEncoderImpl::class)
 class UrlRestControllerTest(
     private val urlService: UrlService,
     private val webApplicationContext: WebApplicationContext,

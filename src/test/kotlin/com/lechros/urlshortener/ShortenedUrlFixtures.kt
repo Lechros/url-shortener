@@ -48,6 +48,7 @@ fun createShortenedUrlResponse(
     createdAt: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC),
     expiresAt: LocalDateTime? = null,
     disabled: Boolean = false,
+    id: Long = 0L,
 ): ShortenedUrlResponse {
     return ShortenedUrlResponse(
         alias = alias,
@@ -55,5 +56,6 @@ fun createShortenedUrlResponse(
         createdAt = createdAt,
         expiresAt = expiresAt,
         disabled = disabled,
+        id = id,
     )
 }

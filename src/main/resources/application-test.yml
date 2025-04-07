@@ -11,3 +11,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+hashid:
+  salt: 806180477368839302
+  round: 4

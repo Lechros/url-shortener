@@ -1,6 +1,7 @@
 package com.lechros.urlshortener.application
 
 import com.lechros.urlshortener.domain.url.ShortenedUrl
+import com.lechros.urlshortener.support.hash.JsonHashId
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
@@ -23,6 +24,8 @@ data class ShortenedUrlResponse(
     val expiresAt: LocalDateTime? = null,
     val disabled: Boolean = false,
     val deleted: Boolean = false,
+    @field:JsonHashId
+    val id: Long,
 ) {
     constructor(shortenedUrl: ShortenedUrl) : this(
         url = shortenedUrl.url,
@@ -31,5 +34,6 @@ data class ShortenedUrlResponse(
         expiresAt = shortenedUrl.expiresAt,
         disabled = shortenedUrl.disabled,
         deleted = shortenedUrl.deleted,
+        id = shortenedUrl.id,
     )
 }

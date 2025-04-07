@@ -15,3 +15,6 @@ spring:
       ddl-auto: create
 server:
   port: 8089
+hashid:
+  salt: 806180477368839302
+  round: 4
