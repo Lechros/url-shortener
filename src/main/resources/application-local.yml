@@ -7,8 +7,14 @@ spring:
     password: mysql_password
     url: jdbc:mysql://localhost:3306/url_shortener
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      port: 6379
   jpa:
     hibernate:
       ddl-auto: create
 server:
   port: 8089
+hashid:
+  salt: 806180477368839302
+  round: 4

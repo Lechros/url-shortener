@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Profile("local")
 @Transactional
@@ -15,7 +16,6 @@ class DatabaseInitializer(
     private val shortenedUrlRepository: ShortenedUrlRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
-
         if (shouldSkip()) return
         populate()
     }
@@ -33,7 +33,7 @@ class DatabaseInitializer(
             ShortenedUrl(
                 "http://google.com",
                 "test123",
-                LocalDateTime.now()
+                LocalDateTime.now(ZoneOffset.UTC)
             )
         )
         shortenedUrlRepository.saveAll(urls)

@@ -3,5 +3,7 @@ package com.lechros.urlshortener.domain.url
 import java.time.LocalDateTime
 
 interface CustomShortenedUrlRepository {
-    fun findValidUrl(shortPath: String, currentTime: LocalDateTime): ShortenedUrl?
+    fun findEnabledUrl(alias: String, currentTime: LocalDateTime): ShortenedUrl?
+
+    fun findValidUrl(alias: String, currentTime: LocalDateTime): ShortenedUrl?
 }
