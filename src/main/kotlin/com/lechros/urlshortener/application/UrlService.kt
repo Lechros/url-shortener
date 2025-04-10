@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional
 import org.apache.commons.validator.routines.UrlValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -31,6 +33,47 @@ class UrlService(
         val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw AliasNotFoundException()
 
         return shortenedUrl.url
+    }
+
+    fun getShortenedUrlById(id: Long): ShortenedUrl {
+        return shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+    }
+
+    fun getShortenedUrlPage(pageable: Pageable): Page<ShortenedUrl> {
+        return shortenedUrlRepository.findAll(pageable)
+    }
+
+    fun disableShortenedUrl(id: Long) {
+        val shortenedUrl = shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+        if (!shortenedUrl.isValid(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw UrlNotFoundException()
+        }
+        if (shortenedUrl.disabled) {
+            return
+        }
+        shortenedUrl.disable()
+        shortenedUrlRepository.save(shortenedUrl)
+    }
+
+    fun enableShortenedUrl(id: Long) {
+        val shortenedUrl = shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+        if (!shortenedUrl.isValid(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw UrlNotFoundException()
+        }
+        if (!shortenedUrl.disabled) {
+            return
+        }
+        shortenedUrl.enable()
+        shortenedUrlRepository.save(shortenedUrl)
+    }
+
+    fun deleteShortenedUrl(id: Long) {
+        val shortenedUrl = shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+        if (!shortenedUrl.isValid(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw UrlNotFoundException()
+        }
+        shortenedUrl.delete()
+        shortenedUrlRepository.save(shortenedUrl)
     }
 
     /**
