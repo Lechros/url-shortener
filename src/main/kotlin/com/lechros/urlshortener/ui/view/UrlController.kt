@@ -19,7 +19,7 @@ class UrlController(
 ) {
     @GetMapping("/{alias:[0-9A-Za-z]{1,20}}")
     fun redirect(@PathVariable alias: String): ResponseEntity<Unit> {
-        val url = urlService.getUrl(alias)
+        val url = urlService.getUrlByAlias(alias)
         return ResponseEntity.status(HttpStatus.FOUND)
             .header(HttpHeaders.LOCATION, url)
             .build()

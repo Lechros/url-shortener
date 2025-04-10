@@ -36,7 +36,7 @@ class UrlServiceTest : BehaviorSpec({
         }
 
         When("해당 경로로 조회하면") {
-            val url = urlService.getUrl("test1")
+            val url = urlService.getUrlByAlias("test1")
 
             Then("원본 URL이 반환된다") {
                 url shouldBe "https://example.com/"
@@ -60,7 +60,7 @@ class UrlServiceTest : BehaviorSpec({
         When("해당 경로로 조회하면") {
             Then("예외가 발생한다") {
                 shouldThrow<UrlNotFoundException> {
-                    urlService.getUrl("test1")
+                    urlService.getUrlByAlias("test1")
                 }
             }
         }
