@@ -1,6 +1,7 @@
 package com.lechros.urlshortener.ui.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lechros.urlshortener.PageInfo
 import com.lechros.urlshortener.application.UrlService
 import com.lechros.urlshortener.createShortenedUrlCreateRequest
 import com.lechros.urlshortener.createShortenedUrlResponse
@@ -12,10 +13,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.json.JsonCompareMode
 import org.springframework.test.web.servlet.MockHttpServletRequestDsl
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.result.ContentResultMatchersDsl
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -70,6 +73,38 @@ class UrlRestControllerTest(
 
         mockMvc.post("/api/create") {
             jsonContent(request)
+        }.andExpect {
+            status { isBadRequest() }
+        }
+    }
+
+    "목록 조회가 성공한다" {
+        val response = PageInfo(listOf(createShortenedUrlResponse()), 0, 1, 1, 1)
+        every { urlService.getShortenedUrlPage(any()) } returns response
+
+        mockMvc.get("/api/list") {}.andExpect {
+            status { isOk() }
+            content { success(response) }
+        }
+    }
+
+    "page, size가 포함된 목록 조회가 성공한다" {
+        val response = PageInfo(listOf(createShortenedUrlResponse()), 0, 10, 1, 1)
+        every { urlService.getShortenedUrlPage(any()) } returns response
+
+        mockMvc.get("/api/list") {
+            param("page", "0")
+            param("size", "10")
+        }.andExpect {
+            status { isOk() }
+            content { success(response) }
+        }
+    }
+
+    "size가 20을 넘는 요청은 실패한다" {
+        mockMvc.get("/api/list") {
+            param("page", "0")
+            param("size", "21")
         }.andExpect {
             status { isBadRequest() }
         }

@@ -1,5 +1,6 @@
 package com.lechros.urlshortener.application
 
+import com.lechros.urlshortener.PageInfo
 import com.lechros.urlshortener.domain.url.ShortenedUrl
 import com.lechros.urlshortener.domain.url.ShortenedUrlRepository
 import com.lechros.urlshortener.infra.redis.MethodFairLock
@@ -8,7 +9,6 @@ import jakarta.transaction.Transactional
 import org.apache.commons.validator.routines.UrlValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -39,8 +39,9 @@ class UrlService(
         return shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
     }
 
-    fun getShortenedUrlPage(pageable: Pageable): Page<ShortenedUrl> {
-        return shortenedUrlRepository.findAll(pageable)
+    fun getShortenedUrlPage(pageable: Pageable): PageInfo<ShortenedUrlResponse> {
+        val page = shortenedUrlRepository.findAll(pageable).map(::ShortenedUrlResponse)
+        return PageInfo.of(page)
     }
 
     fun disableShortenedUrl(id: Long) {
