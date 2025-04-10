@@ -17,11 +17,6 @@ import org.springframework.web.servlet.ModelAndView
 class UrlController(
     private val urlService: UrlService
 ) {
-    @GetMapping
-    fun index(): String {
-        return "forward:/index.html"
-    }
-
     @GetMapping("/{alias:[0-9A-Za-z]{1,20}}")
     fun redirect(@PathVariable alias: String): ResponseEntity<Unit> {
         val url = urlService.getUrl(alias)

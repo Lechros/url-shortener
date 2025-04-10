@@ -4,10 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>URL 단축기</title>
+    <style>
+        /** CSS Reset start */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            border: 0 solid #e5e7eb;
+        }
+
+        html, body, h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
+            margin: 0;
+        }
+
+        body {
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        /* CSS Reset end */
+
+        main {
+            max-width: 1536px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+        }
+
+        h1 {
+            font-size: 36px;
+            line-height: 40px;
+            font-weight: 600;
+            color: oklch(0.21 0.034 264.665);
+            width: 100%;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 24px;
+            color: oklch(0.21 0.034 264.665);
+        }
+
+        a {
+            text-align: center;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            color: white;
+            background-color: #eb4f27;
+            border-radius: 0.5rem;
+            outline: none;
+        }
+
+        a:hover {
+            background-color: #cc4522;
+        }
+
+        a:focus-within {
+            outline: none;
+            box-shadow: 0 0 0 4px #ffd5cc;
+        }
+    </style>
 </head>
 <body>
-<h1>404 Not Found</h1>
-<p>잘못된 링크입니다.</p>
-<a href="/">메인 페이지로 돌아가기</a>
+<main>
+    <h1 style="margin-top: 2rem;">404 Not Found</h1>
+    <p style="margin-top: 1rem;">잘못된 링크입니다.</p>
+    <a href="http://localhost:5173" style="margin-top: 1rem">메인 페이지로 돌아가기</a>
+</main>
 </body>
 </html>
