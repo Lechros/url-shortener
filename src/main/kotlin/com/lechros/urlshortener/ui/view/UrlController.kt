@@ -1,6 +1,6 @@
 package com.lechros.urlshortener.ui.view
 
-import com.lechros.urlshortener.application.UrlNotFoundException
+import com.lechros.urlshortener.application.AliasNotFoundException
 import com.lechros.urlshortener.application.UrlService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -26,7 +26,7 @@ class UrlController(
     }
 
     @ExceptionHandler
-    fun handleUrlNotFoundException(ex: UrlNotFoundException): ModelAndView {
+    fun handleUrlNotFoundException(ex: AliasNotFoundException): ModelAndView {
         return ModelAndView("forward:/error/404.html").apply {
             status = HttpStatus.NOT_FOUND
         }

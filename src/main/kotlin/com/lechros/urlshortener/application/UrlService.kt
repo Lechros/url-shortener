@@ -24,11 +24,11 @@ class UrlService(
     /**
      * `alias`에 해당하는 단축 URL을 조회합니다.
      *
-     * @throws UrlNotFoundException 단축 URL이 존재하지 않는 경우
+     * @throws AliasNotFoundException 단축 URL이 존재하지 않는 경우
      */
     fun getUrlByAlias(alias: String): String {
         val now = LocalDateTime.now(ZoneOffset.UTC)
-        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw UrlNotFoundException()
+        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw AliasNotFoundException()
 
         return shortenedUrl.url
     }

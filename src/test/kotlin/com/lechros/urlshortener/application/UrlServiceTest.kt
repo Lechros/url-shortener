@@ -59,7 +59,7 @@ class UrlServiceTest : BehaviorSpec({
 
         When("해당 경로로 조회하면") {
             Then("예외가 발생한다") {
-                shouldThrow<UrlNotFoundException> {
+                shouldThrow<AliasNotFoundException> {
                     urlService.getUrlByAlias("test1")
                 }
             }
