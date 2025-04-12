@@ -16,7 +16,7 @@ spring:
 server:
   port: 8089
 frontend:
-  url: http://localhost:3000
+  url: http://localhost:5173
 hashid:
   salt: 806180477368839302
   round: 4

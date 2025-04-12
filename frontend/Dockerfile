@@ -13,7 +13,8 @@ COPY vite.config.ts ./
 COPY static ./static
 COPY src ./src
 
-ENV PUBLIC_BACKEND_URL=http://localhost:8089
+ARG BACKEND_URL
+ENV PUBLIC_BACKEND_URL=${BACKEND_URL}
 RUN bun run build
 
 FROM node:20-alpine AS server
