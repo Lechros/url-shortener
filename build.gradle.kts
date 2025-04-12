@@ -33,6 +33,8 @@ dependencies {
     implementation("com.linecorp.kotlin-jdsl:jpql-render:3.5.5")
     implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.5.5")
     implementation("commons-validator:commons-validator:1.9.0")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
