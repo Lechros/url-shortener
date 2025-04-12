@@ -10,7 +10,14 @@ class FeistelCipherTest : StringSpec({
     val feistelCipher = FeistelCipher(806180477368839302uL, 4)
 
     "Feistel 암호화 후 복호화하면 원본이 반환된다" {
-        forAll<ULong> { input ->
+        forAll(
+            row(1uL),
+            row(3uL),
+            row(17uL),
+            row(24uL),
+            row(100uL),
+            row(9999999999999999999uL),
+        ) { input ->
             val encrypted = feistelCipher.encrypt(input)
             val decrypted = feistelCipher.decrypt(encrypted)
 
@@ -20,10 +27,19 @@ class FeistelCipherTest : StringSpec({
 
     "Feistel 암호화 시 예상된 결과가 반환된다" {
         forAll(
-            row(1uL, 8882965775497821603uL),
-            row(3uL, 1038083939800381464uL),
+            row(1uL, 8882965776513927401uL),
+            row(3uL, 5376012202367020031uL),
         ) { input, expected ->
             feistelCipher.encrypt(input) shouldBe expected
+        }
+    }
+
+    "Feistel 복호화 시 예상된 결과가 반환된다" {
+        forAll(
+            row(8882965776513927401uL, 1uL),
+            row(5376012202367020031uL, 3uL),
+        ) { input, expected ->
+            feistelCipher.decrypt(input) shouldBe expected
         }
     }
 })

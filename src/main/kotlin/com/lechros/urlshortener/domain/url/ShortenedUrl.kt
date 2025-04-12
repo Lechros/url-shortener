@@ -32,6 +32,10 @@ class ShortenedUrl(
 
     fun isExpiredAt(at: LocalDateTime): Boolean = expiresAt?.isBefore(at) ?: false
 
+    fun isValid(at: LocalDateTime): Boolean {
+        return !deleted && !isExpiredAt(at)
+    }
+
     fun disable() {
         disabled = true
     }

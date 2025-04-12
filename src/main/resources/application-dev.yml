@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+server:
+  port: 8089
+frontend:
+  url: ${FRONTEND_URL}
+hashid:
+  salt: ${HASHID_SALT}
+  round: ${HASHID_ROUND}

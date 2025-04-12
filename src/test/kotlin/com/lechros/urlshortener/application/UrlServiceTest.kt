@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.util.*
 
 class UrlServiceTest : BehaviorSpec({
     val shortenedUrlRepository = mockk<ShortenedUrlRepository>()
@@ -36,7 +37,7 @@ class UrlServiceTest : BehaviorSpec({
         }
 
         When("해당 경로로 조회하면") {
-            val url = urlService.getUrl("test1")
+            val url = urlService.getUrlByAlias("test1")
 
             Then("원본 URL이 반환된다") {
                 url shouldBe "https://example.com/"
@@ -59,8 +60,8 @@ class UrlServiceTest : BehaviorSpec({
 
         When("해당 경로로 조회하면") {
             Then("예외가 발생한다") {
-                shouldThrow<UrlNotFoundException> {
-                    urlService.getUrl("test1")
+                shouldThrow<AliasNotFoundException> {
+                    urlService.getUrlByAlias("test1")
                 }
             }
         }
@@ -194,6 +195,195 @@ class UrlServiceTest : BehaviorSpec({
             Then("예외가 발생한다") {
                 shouldThrow<InvalidUrlExpireDateException> {
                     urlService.shortenUrl(createShortenedUrlCreateRequest(expiresAt = expireDate))
+                }
+            }
+        }
+    }
+
+    Given("단축 URL이 존재하지 않을 때") {
+        val id = 1L
+        every { shortenedUrlRepository.findById(any()) } returns Optional.empty()
+
+        When("id로 조회하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.getShortenedUrlById(id)
+                }
+            }
+        }
+
+        When("비활성화를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.disableShortenedUrl(id)
+                }
+            }
+        }
+
+        When("활성화를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.enableShortenedUrl(id)
+                }
+            }
+        }
+
+        When("삭제를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.deleteShortenedUrl(id)
+                }
+            }
+        }
+    }
+
+    Given("단축 URL이 활성화 상태일 때") {
+        val id = 1L
+        val mockUrl = createShortenedUrl(id = id)
+        every { shortenedUrlRepository.findById(id) } returns Optional.of(mockUrl)
+
+        When("id로 조회하면") {
+            val shortenedUrl = urlService.getShortenedUrlById(id)
+
+            Then("정상적으로 조회된다") {
+                shortenedUrl shouldBe mockUrl
+            }
+        }
+
+        When("비활성화를 요청하면") {
+            urlService.disableShortenedUrl(id)
+
+            Then("정상적으로 비활성화된다") {
+                mockUrl.disabled shouldBe true
+            }
+        }
+
+        When("활성화를 요청하면") {
+            urlService.enableShortenedUrl(id)
+
+            Then("정상적으로 활성화된다") {
+                mockUrl.disabled shouldBe false
+            }
+        }
+
+        When("삭제를 요청하면") {
+            urlService.deleteShortenedUrl(id)
+
+            Then("정상적으로 삭제된다") {
+                mockUrl.deleted shouldBe true
+            }
+        }
+    }
+
+    Given("단축 URL이 비활성화 상태일 때") {
+        val id = 1L
+        val mockUrl = createShortenedUrl(id = id, disabled = true)
+        every { shortenedUrlRepository.findById(id) } returns Optional.of(mockUrl)
+
+        When("id로 조회하면") {
+            val shortenedUrl = urlService.getShortenedUrlById(id)
+
+            Then("정상적으로 조회된다") {
+                shortenedUrl shouldBe mockUrl
+            }
+        }
+
+        When("비활성화를 요청하면") {
+            urlService.disableShortenedUrl(id)
+
+            Then("정상적으로 비활성화된다") {
+                mockUrl.disabled shouldBe true
+            }
+        }
+
+        When("활성화를 요청하면") {
+            urlService.enableShortenedUrl(id)
+
+            Then("정상적으로 활성화된다") {
+                mockUrl.disabled shouldBe false
+            }
+        }
+
+        When("삭제를 요청하면") {
+            urlService.deleteShortenedUrl(id)
+
+            Then("정상적으로 삭제된다") {
+                mockUrl.deleted shouldBe true
+            }
+        }
+    }
+
+    Given("단축 URL이 만료된 상태일 때") {
+        val id = 1L
+        val mockUrl = createShortenedUrl(id = id, expiresAt = LocalDateTime.now(ZoneOffset.UTC).minusDays(1))
+        every { shortenedUrlRepository.findById(id) } returns Optional.of(mockUrl)
+
+        When("id로 조회하면") {
+            val shortenedUrl = urlService.getShortenedUrlById(id)
+
+            Then("정상적으로 조회된다") {
+                shortenedUrl shouldBe mockUrl
+            }
+        }
+
+        When("비활성화를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.disableShortenedUrl(id)
+                }
+            }
+        }
+
+        When("활성화를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.enableShortenedUrl(id)
+                }
+            }
+        }
+
+        When("삭제를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.deleteShortenedUrl(id)
+                }
+            }
+        }
+    }
+
+    Given("단축 URL이 삭제된 상태일 때") {
+        val id = 1L
+        val mockUrl = createShortenedUrl(id = id, deleted = true)
+        every { shortenedUrlRepository.findById(id) } returns Optional.of(mockUrl)
+
+        When("id로 조회하면") {
+            val shortenedUrl = urlService.getShortenedUrlById(id)
+
+            Then("정상적으로 조회된다") {
+                shortenedUrl shouldBe mockUrl
+            }
+        }
+
+        When("비활성화를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.disableShortenedUrl(id)
+                }
+            }
+        }
+
+        When("활성화를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.enableShortenedUrl(id)
+                }
+            }
+        }
+
+        When("삭제를 요청하면") {
+            Then("예외가 발생한다") {
+                shouldThrow<UrlNotFoundException> {
+                    urlService.deleteShortenedUrl(id)
                 }
             }
         }

@@ -1,9 +1,6 @@
 package com.lechros.urlshortener.ui.api
 
-import com.lechros.urlshortener.application.InvalidAliasException
-import com.lechros.urlshortener.application.InvalidUrlException
-import com.lechros.urlshortener.application.InvalidUrlExpireDateException
-import com.lechros.urlshortener.application.ShortUrlCreateException
+import com.lechros.urlshortener.application.*
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -55,6 +52,13 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     fun handleShortUrlCreateException(ex: ShortUrlCreateException): ResponseEntity<ApiResponse<Nothing>> {
         logger.error("message", ex)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiResponse.error(ex.message))
+    }
+
+    @ExceptionHandler(UrlNotFoundException::class)
+    fun handleUrlNotFoundException(ex: UrlNotFoundException): ResponseEntity<ApiResponse<Nothing>> {
+        logger.error("message", ex)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(ApiResponse.error(ex.message))
     }
 }

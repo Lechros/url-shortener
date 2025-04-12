@@ -1,5 +1,6 @@
 package com.lechros.urlshortener.application
 
+import com.lechros.urlshortener.PageInfo
 import com.lechros.urlshortener.domain.url.ShortenedUrl
 import com.lechros.urlshortener.domain.url.ShortenedUrlRepository
 import com.lechros.urlshortener.infra.redis.MethodFairLock
@@ -8,6 +9,7 @@ import jakarta.transaction.Transactional
 import org.apache.commons.validator.routines.UrlValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -24,13 +26,55 @@ class UrlService(
     /**
      * `alias`에 해당하는 단축 URL을 조회합니다.
      *
-     * @throws UrlNotFoundException 단축 URL이 존재하지 않는 경우
+     * @throws AliasNotFoundException 단축 URL이 존재하지 않는 경우
      */
-    fun getUrl(alias: String): String {
+    fun getUrlByAlias(alias: String): String {
         val now = LocalDateTime.now(ZoneOffset.UTC)
-        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw UrlNotFoundException()
+        val shortenedUrl = shortenedUrlRepository.findEnabledUrl(alias, now) ?: throw AliasNotFoundException()
 
         return shortenedUrl.url
+    }
+
+    fun getShortenedUrlById(id: Long): ShortenedUrl {
+        return shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+    }
+
+    fun getShortenedUrlPage(pageable: Pageable): PageInfo<ShortenedUrlResponse> {
+        val page = shortenedUrlRepository.findAll(pageable).map(::ShortenedUrlResponse)
+        return PageInfo.of(page)
+    }
+
+    fun disableShortenedUrl(id: Long) {
+        val shortenedUrl = shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+        if (!shortenedUrl.isValid(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw UrlNotFoundException()
+        }
+        if (shortenedUrl.disabled) {
+            return
+        }
+        shortenedUrl.disable()
+        shortenedUrlRepository.save(shortenedUrl)
+    }
+
+    fun enableShortenedUrl(id: Long) {
+        val shortenedUrl = shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+        if (!shortenedUrl.isValid(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw UrlNotFoundException()
+        }
+        if (!shortenedUrl.disabled) {
+            return
+        }
+        shortenedUrl.enable()
+        shortenedUrlRepository.save(shortenedUrl)
+    }
+
+    fun deleteShortenedUrl(id: Long) {
+        val shortenedUrl = shortenedUrlRepository.findById(id).orElseThrow { UrlNotFoundException() }
+        if (!shortenedUrl.isValid(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw UrlNotFoundException()
+        }
+        shortenedUrl.delete()
+        shortenedUrlRepository.save(shortenedUrl)
     }
 
     /**

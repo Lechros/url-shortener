@@ -8,13 +8,11 @@ class FeistelCipher(
         var left = input shr 32
         var right = input and MASK
 
-        repeat(rounds) {
-            val round = it
-            val f = f(right, round)
-            val newLeft = right
-            val newRight = left xor f
-            left = newLeft
-            right = newRight
+        repeat(rounds) { round ->
+            val f = f(right, round) and MASK
+            val temp = right
+            right = left xor f
+            left = temp
         }
 
         return (left shl 32) or (right and MASK)
@@ -24,13 +22,11 @@ class FeistelCipher(
         var left = input shr 32
         var right = input and MASK
 
-        repeat(rounds) {
-            val round = rounds - it - 1
-            val f = f(right, round)
-            val newRight = left
-            val newLeft = right xor f
-            left = newLeft
-            right = newRight
+        for (round in (rounds - 1) downTo 0) {
+            val f = f(left, round) and MASK
+            val temp = left
+            left = right xor f
+            right = temp
         }
 
         return (left shl 32) or (right and MASK)
